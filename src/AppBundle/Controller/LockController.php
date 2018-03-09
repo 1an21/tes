@@ -117,7 +117,14 @@ class LockController extends FOSRestController implements ClassResourceInterface
     /**
      * @Route("/locks/try")
      * @Method ({"POST"})
-     *
+     * @Security("has_role('ROLE_LOCK_ADDER')")
+     * @ApiDoc(
+     *     output="AppBundle\Entity\Lock",
+     *     statusCodes={
+     *         201 = "Returned when a new lock has been successful sent to broker",
+     *         404 = "Return when not found"
+     *     }
+     * )
      */
     public function postTryAction(Request $request){
         
@@ -134,10 +141,10 @@ class LockController extends FOSRestController implements ClassResourceInterface
         $pass=$request->request->get('lock_pass');
         
         $lock= new Lock();
-        $l_name=$lock->setLockName($name);
+        $lock->setLockName($name);
         $l_name=$lock->getLockName();
 
-        $l_pass=$lock->setLockPass(base64_encode($pass));
+        $lock->setLockPass(base64_encode($pass));
         $l_pass=$lock->getLockPass();
         //$ll_pass=$lock->setLockPass(base64_decode($l_pass));
         //$ll_pass=$lock->getLockPass();
@@ -145,6 +152,18 @@ class LockController extends FOSRestController implements ClassResourceInterface
         $mqtt->qwerty($l_name, $l_pass);
 
         
+        return $data;
+    }
+
+    /**
+     * @Route("/locks/config")
+     */
+    public function configAction(){
+
+        $filename="file.txt";
+        $data = file_get_contents($filename);
+        $data = str_replace("olddata","newdata",$data);
+        file_put_contents($filename,$data);
         return $data;
     }
 

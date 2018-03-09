@@ -116,7 +116,8 @@ class LockkeyController extends FOSRestController implements ClassResourceInterf
             '_format' => $request->get('_format'),
         ];
 
-        $this->routeRedirectView('', $routeOptions, Response::HTTP_CREATED);
+         $this->routeRedirectView('', $routeOptions, Response::HTTP_CREATED);
+
         $id=$lockkey->getLock();
         $ids=$lockkey->getKey();
 
@@ -133,13 +134,14 @@ class LockkeyController extends FOSRestController implements ClassResourceInterf
 
         $keys=$em->getRepository('AppBundle:Key')->findOneById($ids);
         $tag_key=$keys->getTag();
+        $id=$keys->getId();
 
         $lock_key= $name_lock.':'.$tag_key;
         $predisClient->set($lock_key, 1);
         $rr=$predisClient->get($lock_key);
 
-        $id=$lockkey->getId();
-        return $rr;
+
+        return $this->getLockKeyRepository()->findLockKeyQuery($lock, $id)->getOneOrNullResult();
 
     }
 
@@ -255,7 +257,7 @@ class LockkeyController extends FOSRestController implements ClassResourceInterf
         $key = $this->getLockKeyRepository()->deleteLockKeyQuery($lock, $id)->getResult();
         if ($key== 0) {
             return new View("This id $id doesnt exist"); }
-        return new View("Deleted user $id");
+        return new View("Deleted key $id for lock $lock");
     }
 
     /**
@@ -269,4 +271,5 @@ class LockkeyController extends FOSRestController implements ClassResourceInterf
     {
         return $this->get('crv.doctrine_entity_repository.lock');
     }
+
 }

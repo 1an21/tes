@@ -15,9 +15,6 @@ class LockkeyType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        //$builder
-          // ->add('lock', EntityType::class, array('class' => 'AppBundle:Lock', 'choice_label' => 'lock'));
-
         $builder
             ->add('key', EntityType::class, array('class' => 'AppBundle:Key', 'choice_label' => 'key'));
     }
