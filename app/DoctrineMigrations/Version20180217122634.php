@@ -27,7 +27,10 @@ class Version20180217122634 extends AbstractMigration
     public function down(Schema $schema)
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
-        $this->addSql(" DELETE FROM `users` WHERE `users`.`username` = 'an21' AND `users`.`username` = 'man21';");
+        $this->addSql(" DELETE FROM `users` WHERE `users`.`username` = 'an21';");
+
+        $this->addSql(" DELETE FROM `users` WHERE `users`.`username` = 'man21';");
+       
 
     }
 }
